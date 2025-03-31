@@ -21,9 +21,13 @@ const keyTokenSchema = new Schema({
         required: true,
     },
     refreshToken: {
-        type: Array,
-        //required: true
+        type: String,
+        required: true
     },
+    refreshTokensUsed: {
+        type: Array,
+        default: []
+    }
 }, {
     timestamps: true,
     collection: COLLECTION_NAME

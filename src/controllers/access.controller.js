@@ -1,9 +1,21 @@
 'use strict';
 
 import AccessService from "../services/access.service.js";
-import {CREATED} from "../core/success.response.js";
+import {CREATED, SuccessResponse} from "../core/success.response.js";
 
 class AccessController {
+    logout = async (req, res, next) => {
+        new SuccessResponse({
+            message: "Logout success!",
+            metadata: await AccessService.logout(req.keyStore)
+        }).send(res)
+    }
+
+    login = async (req, res, next) => {
+        new SuccessResponse({
+            metadata: await AccessService.login( req.body )
+        }).send(res)
+    }
 
     signUp = async (req, res, next) => {
         new CREATED({

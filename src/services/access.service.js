@@ -8,6 +8,8 @@ import {createTokenPair} from "../auth/authUtils.js";
 import {getInfoData} from "../utils/index.js";
 import {AuthFailureError, BadRequestError} from "../core/error.response.js";
 import {findByEmail} from "./shop.service.js";
+import keytokenModel from "../models/keytoken.model.js";
+import keyTokenService from "./keyToken.service.js";
 
 const RoleShop = {
     SHOP: "SHOP",
@@ -18,6 +20,11 @@ const RoleShop = {
 
 class AccessService {
 
+    static logout = async (keyStore) => {
+        const delKey = await keyTokenService.removeKeyById(keyStore._id);
+        console.log('%c DEBUG[ delKey ]-66:', 'font-size:13px; background:pink; color:#483D8B;', delKey);
+        return delKey;
+    }
     static login = async ({ email, password, refreshToken = null }) => {
         // step 1: check email
         const foundShop = await findByEmail({ email });
@@ -32,7 +39,15 @@ class AccessService {
         const privateKey = crypto.randomBytes(64).toString("hex")
 
         // step 4: create Tokens
-        const tokens = createTokenPair({ userId: foundShop._id, email }, publicKey, privateKey)
+        const { _id: userId } = foundShop;
+        const tokens = createTokenPair({ userId, email }, publicKey, privateKey);
+
+        await KeyTokenService.createKeyToken({
+            refreshToken: tokens.refreshToken,
+            privateKey,
+            publicKey,
+            userId
+        });
 
         return {
             shop: getInfoData({ fields: ["_id", "name", "email"], object: foundShop }),

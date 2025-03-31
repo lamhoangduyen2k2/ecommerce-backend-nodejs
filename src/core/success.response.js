@@ -10,7 +10,7 @@ const ReasonStatusCode = {
     CREATED: "Created",
 }
 
-class SuccessResponse {
+export class SuccessResponse {
     constructor({message, statusCode = StatusCode.OK, reasonStatusCode = ReasonStatusCode.OK, metadata = {} }) {
         this.message = message || reasonStatusCode
         this.status = statusCode
